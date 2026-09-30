@@ -1,0 +1,3530 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Группа 3-400-25-201В</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(0,180,255,0.12), transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(0,100,255,0.10), transparent 30%),
+        #020816;
+    color: #dff9ff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* =========================
+   ФОН
+========================= */
+
+#hudCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    opacity: 0.55;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(0, 200, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 200, 255, 0.025) 1px, transparent 1px);
+    background-size: 45px 45px;
+    z-index: -1;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.4);
+    background: rgba(0, 10, 25, 0.82);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    max-width: 1400px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    width: 58px;
+    height: 58px;
+    border: 2px solid #00d9ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow:
+        0 0 10px #00d9ff,
+        inset 0 0 15px rgba(0,217,255,0.3);
+}
+
+h1 {
+    font-size: 24px;
+    color: #ffffff;
+    text-shadow: 0 0 12px #00cfff;
+}
+
+.subtitle {
+    color: #6edfff;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* =========================
+   USER AREA
+========================= */
+
+.auth-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-button {
+    border: 1px solid #00d9ff;
+    background: rgba(0, 100, 150, 0.15);
+    color: #8feeff;
+    padding: 11px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.25s;
+    font-weight: bold;
+}
+
+.auth-button:hover {
+    background: rgba(0, 190, 255, 0.22);
+    box-shadow: 0 0 15px rgba(0,220,255,0.5);
+}
+
+.admin-accounts-btn {
+    display: none;
+    border: 1px solid #00e0ff;
+    background: rgba(0, 224, 255, 0.15);
+    color: #00e0ff;
+    padding: 11px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.25s;
+}
+
+.admin-accounts-btn:hover {
+    background: rgba(0, 224, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0,224,255,0.4);
+}
+
+.user-badge {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
+    border: 1px solid rgba(0,220,255,0.4);
+    border-radius: 10px;
+    background: rgba(0,80,120,0.15);
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #00d9ff;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 0 10px rgba(0,217,255,0.45);
+}
+
+.default-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #00d9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: rgba(0,100,150,0.25);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.user-role {
+    font-size: 11px;
+    color: #55ddff;
+}
+
+.logout-button {
+    border: 1px solid #ff5577;
+    background: rgba(255,50,90,0.08);
+    color: #ff7895;
+    padding: 9px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background: rgba(255,50,90,0.2);
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px 60px;
+}
+
+/* =========================
+   INFO PANEL
+========================= */
+
+.info-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.info-card {
+    background: rgba(0, 20, 40, 0.65);
+    border: 1px solid rgba(0,220,255,0.3);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 0 20px rgba(0,180,255,0.08);
+}
+
+.info-title {
+    color: #4edcff;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+}
+
+.info-value {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.section {
+    background: rgba(0, 14, 30, 0.76);
+    border: 1px solid rgba(0,210,255,0.28);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow:
+        0 0 25px rgba(0,180,255,0.07),
+        inset 0 0 30px rgba(0,120,255,0.025);
+}
+
+.section-title {
+    color: #ffffff;
+    font-size: 23px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title span {
+    color: #00ddff;
+}
+
+/* =========================
+   SCHEDULE
+========================= */
+
+.schedule-editor {
+    display: none;
+    background: rgba(0,50,75,0.22);
+    border: 1px dashed rgba(0,220,255,0.4);
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.schedule-editor h3 {
+    color: #5de5ff;
+    margin-bottom: 15px;
+}
+
+.schedule-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr auto;
+    gap: 10px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0,10,25,0.85);
+    color: white;
+    border: 1px solid rgba(0,210,255,0.35);
+    border-radius: 8px;
+    outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #00ddff;
+    box-shadow: 0 0 10px rgba(0,220,255,0.2);
+}
+
+button {
+    font-family: inherit;
+}
+
+.primary-button {
+    border: 1px solid #00ddff;
+    background: rgba(0,190,230,0.14);
+    color: #83edff;
+    border-radius: 8px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.primary-button:hover {
+    background: rgba(0,210,255,0.25);
+    box-shadow: 0 0 12px rgba(0,220,255,0.3);
+}
+
+.schedule-table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: rgba(0,120,170,0.2);
+    color: #70e8ff;
+    padding: 13px;
+    border: 1px solid rgba(0,200,255,0.2);
+}
+
+td {
+    padding: 13px;
+    border: 1px solid rgba(0,200,255,0.14);
+    color: #e8fbff;
+}
+
+tr:hover td {
+    background: rgba(0,180,255,0.05);
+}
+
+.delete-button {
+    border: 1px solid #ff5577;
+    background: transparent;
+    color: #ff7895;
+    padding: 6px 9px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background: rgba(255,60,90,0.15);
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    border: 1px solid rgba(0,220,255,0.25);
+    border-radius: 12px;
+    padding: 18px;
+    background: rgba(0,30,50,0.4);
+}
+
+.card h3 {
+    color: #72e8ff;
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: #b9e8ef;
+    line-height: 1.6;
+}
+
+.card button {
+    margin-top: 12px;
+}
+
+/* =========================
+   SUPPLIES
+========================= */
+
+.supply-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.supply-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+.supply-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid rgba(0,220,255,0.2);
+    border-radius: 9px;
+    background: rgba(0,30,50,0.35);
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(7px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-box {
+    width: min(500px, 100%);
+    background:
+        linear-gradient(145deg, rgba(0,28,52,0.98), rgba(0,9,24,0.98));
+    border: 1px solid #00d9ff;
+    border-radius: 16px;
+    box-shadow:
+        0 0 35px rgba(0,210,255,0.25),
+        inset 0 0 25px rgba(0,160,255,0.05);
+    padding: 25px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-box.wide {
+    width: min(700px, 100%);
+}
+
+.close-modal {
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    border: none;
+    background: none;
+    color: #80eaff;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.modal-title {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.auth-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 20px;
+}
+
+.auth-tab {
+    padding: 12px;
+    background: rgba(0,100,150,0.1);
+    color: #6ddff5;
+    border: 1px solid rgba(0,210,255,0.25);
+    cursor: pointer;
+}
+
+.auth-tab.active {
+    background: rgba(0,190,240,0.2);
+    color: white;
+    border-color: #00d9ff;
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    color: #76e5ff;
+    margin-bottom: 7px;
+    font-size: 13px;
+}
+
+.password-wrap {
+    position: relative;
+}
+
+.password-wrap input {
+    padding-right: 52px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #76e5ff;
+    cursor: pointer;
+    font-size: 20px;
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+}
+
+.password-toggle:hover {
+    background: rgba(0,210,255,0.12);
+}
+
+.auth-submit {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.auth-message {
+    min-height: 20px;
+    margin-top: 12px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.error {
+    color: #ff6688;
+}
+
+.success {
+    color: #55ffbb;
+}
+
+/* =========================
+   ACCOUNTS MODAL STYLES
+========================= */
+
+.account-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.account-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 14px;
+    background: rgba(0, 40, 70, 0.4);
+    border: 1px solid rgba(0,210,255,0.25);
+    border-radius: 10px;
+}
+
+.account-card-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.account-card-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #00d9ff;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.account-card-default-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #00d9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: rgba(0,100,150,0.25);
+    flex-shrink: 0;
+}
+
+.account-card-details {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.account-card-name {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.account-card-email {
+    color: #72e8ff;
+    font-size: 13px;
+    word-break: break-all;
+}
+
+.account-card-role {
+    font-size: 11px;
+    color: #55ddff;
+    margin-top: 2px;
+}
+
+.role-badge-owner {
+    color: #ff3366;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255,51,102,0.5);
+}
+
+.role-badge-admin {
+    color: #ffd166;
+    font-weight: bold;
+}
+
+.role-badge-student {
+    color: #70e8ff;
+}
+
+.role-toggle-btn {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    border: 1px solid;
+}
+
+.role-btn-make-admin {
+    border-color: #ffd166;
+    background: rgba(255, 209, 102, 0.1);
+    color: #ffd166;
+}
+
+.role-btn-make-admin:hover {
+    background: rgba(255, 209, 102, 0.25);
+}
+
+.role-btn-remove-admin {
+    border-color: #ff5577;
+    background: rgba(255, 85, 119, 0.1);
+    color: #ff7895;
+}
+
+.role-btn-remove-admin:hover {
+    background: rgba(255, 85, 119, 0.25);
+}
+
+/* =========================
+   AVATAR
+========================= */
+
+.avatar-section {
+    border: 1px dashed rgba(0,220,255,0.35);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.avatar-preview-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.avatar-preview {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: 2px solid #00d9ff;
+    object-fit: cover;
+    display: none;
+    box-shadow: 0 0 15px rgba(0,220,255,0.35);
+}
+
+.avatar-default-preview {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: 2px solid #00d9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    background: rgba(0,90,130,0.2);
+}
+
+.avatar-buttons {
+    flex: 1;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-label {
+    display: inline-block;
+    padding: 10px 13px;
+    border: 1px solid #00d9ff;
+    color: #7eeaff;
+    border-radius: 7px;
+    cursor: pointer;
+    background: rgba(0,150,210,0.1);
+}
+
+.file-label:hover {
+    background: rgba(0,210,255,0.2);
+}
+
+.remove-avatar {
+    margin-top: 8px;
+    border: 1px solid #ff5577;
+    color: #ff7895;
+    background: transparent;
+    border-radius: 6px;
+    padding: 7px 10px;
+    cursor: pointer;
+    display: none;
+}
+
+/* =========================
+   ПРАВКИ: ИНФО, РАСПИСАНИЕ, ЗАЯВКИ
+========================= */
+
+.info-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.info-photo,
+.info-photo-default {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    border-radius: 50%;
+    border: 2px solid #00d9ff;
+    box-shadow: 0 0 10px rgba(0,217,255,0.45);
+}
+
+.info-photo {
+    object-fit: cover;
+    display: block;
+}
+
+.info-photo-default {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    background: rgba(0,100,150,0.25);
+}
+
+.info-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.info-value {
+    word-break: break-word;
+}
+
+.info-edit-btn {
+    display: none;
+    border: 1px solid #00d9ff;
+    background: rgba(0,150,210,0.1);
+    color: #7eeaff;
+    border-radius: 7px;
+    padding: 7px 10px;
+    cursor: pointer;
+}
+
+.info-edit-btn:hover {
+    background: rgba(0,210,255,0.2);
+}
+
+.day-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.day-tab {
+    padding: 8px 14px;
+    border: 1px solid #1e90ff;
+    background: rgba(0,120,255,0.12);
+    color: #8feeff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.day-tab:hover {
+    background: rgba(0,170,255,0.25);
+}
+
+.day-tab.active {
+    background: #00e0ff;
+    border-color: #00e0ff;
+    color: #002233;
+    box-shadow: 0 0 12px rgba(0,224,255,0.5);
+}
+
+.day-content {
+    background: rgba(0,8,18,0.75);
+    border: 1px solid rgba(0,200,255,0.15);
+    border-radius: 10px;
+    padding: 18px;
+    min-height: 110px;
+    margin-bottom: 16px;
+}
+
+.day-title {
+    color: #4edcff;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.day-empty {
+    color: #9fc3cc;
+    line-height: 1.5;
+}
+
+.lesson-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,220,255,0.12);
+    color: #e8fbff;
+}
+
+.lesson-item:last-child {
+    border-bottom: none;
+}
+
+.schedule-editor {
+    background: none;
+    border: none;
+    border-top: 1px dashed rgba(0,220,255,0.4);
+    border-radius: 0;
+    padding: 16px 0 0;
+    margin: 0;
+}
+
+.schedule-editor .primary-button {
+    width: 100%;
+    margin-top: 10px;
+    background: linear-gradient(90deg, #0a5cff, #00e0ff);
+    color: #001322;
+    text-transform: uppercase;
+}
+
+.absence-item {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,220,255,0.12);
+}
+
+.absence-item:last-child {
+    border-bottom: none;
+}
+
+.absence-reason {
+    color: #b8e7ee;
+    margin: 6px 0 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.status-badge {
+    display: inline-block;
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid;
+    margin-left: 8px;
+}
+
+.status-pending {
+    color: #ffd166;
+    border-color: rgba(255,209,102,0.5);
+}
+
+.status-approved {
+    color: #55ffbb;
+    border-color: rgba(85,255,187,0.5);
+}
+
+.status-rejected {
+    color: #ff7895;
+    border-color: rgba(255,120,149,0.5);
+}
+
+.absence-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.absence-actions button {
+    margin-top: 0;
+}
+
+.approve-button {
+    border: 1px solid #55ffbb;
+    background: transparent;
+    color: #55ffbb;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.approve-button:hover {
+    background: rgba(85,255,187,0.15);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+    text-align: center;
+    color: #4fa8b9;
+    padding: 25px;
+    font-size: 12px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 850px) {
+
+    .header-inner {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .auth-area {
+        justify-content: flex-end;
+    }
+
+    .info-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-form {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 19px;
+    }
+}
+
+@media (max-width: 550px) {
+
+    .section {
+        padding: 17px;
+    }
+
+    .auth-area {
+        flex-wrap: wrap;
+    }
+
+    .user-badge {
+        width: 100%;
+    }
+
+    .supply-form {
+        flex-direction: column;
+    }
+    
+    .account-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .role-toggle-btn {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="hudCanvas"></canvas>
+
+<header>
+    <div class="header-inner">
+
+        <div class="logo-title">
+            <div class="logo">⚡</div>
+
+            <div>
+                <h1>Технологический колледж</h1>
+                <div class="subtitle">
+                    Группа 3-400-25-201В • JARVIS SYSTEM
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-area">
+
+            <button
+                id="loginButton"
+                class="auth-button"
+                onclick="openAuthModal()">
+                🔐 Войти
+            </button>
+
+            <button
+                id="accountsAdminButton"
+                class="admin-accounts-btn"
+                onclick="openAccountsModal()">
+                👥 Аккаунты
+            </button>
+
+            <div
+                id="userBadge"
+                class="user-badge">
+
+                <div id="userAvatarContainer"></div>
+
+                <div class="user-info">
+                    <div id="userName" class="user-name"></div>
+                    <div id="userRole" class="user-role"></div>
+                </div>
+
+                <button
+                    class="logout-button"
+                    onclick="logout()">
+                    Выйти
+                </button>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+
+<div class="container">
+
+    <!-- INFO -->
+
+    <div class="info-panel">
+
+        <div class="info-card">
+            <div id="infoPhoto-curator"></div>
+            <div class="info-text">
+                <div class="info-title">Куратор</div>
+                <div class="info-value" id="infoName-curator"></div>
+            </div>
+            <button
+                id="infoEdit-curator"
+                class="info-edit-btn"
+                onclick="openInfoModal('curator')"
+                title="Изменить">
+                ✏️
+            </button>
+        </div>
+
+        <div class="info-card">
+            <div id="infoPhoto-headman"></div>
+            <div class="info-text">
+                <div class="info-title">Староста</div>
+                <div class="info-value" id="infoName-headman"></div>
+            </div>
+            <button
+                id="infoEdit-headman"
+                class="info-edit-btn"
+                onclick="openInfoModal('headman')"
+                title="Изменить">
+                ✏️
+            </button>
+        </div>
+
+        <div class="info-card">
+            <div id="infoPhoto-developer"></div>
+            <div class="info-text">
+                <div class="info-title">Разработчик</div>
+                <div class="info-value" id="infoName-developer"></div>
+            </div>
+            <button
+                id="infoEdit-developer"
+                class="info-edit-btn"
+                onclick="openInfoModal('developer')"
+                title="Изменить">
+                ✏️
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- РАСПИСАНИЕ -->
+
+    <section class="section">
+
+        <div class="section-title">
+            <span>📅</span>
+            Расписание
+        </div>
+
+        <div id="dayTabs" class="day-tabs"></div>
+
+        <div id="dayContent" class="day-content"></div>
+
+        <div id="scheduleEditor" class="schedule-editor">
+
+            <input
+                type="text"
+                id="lessonInput"
+                placeholder="Например: 1. Математика (ауд. 201)">
+
+            <button
+                class="primary-button"
+                onclick="addLesson()">
+                Добавить в расписание
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ОТГУЛ -->
+
+    <section class="section">
+
+        <div class="section-title">
+            <span>📝</span>
+            Отпроситься / Отгул
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+
+                <h3>📚 Причина</h3>
+
+                <p>
+                    Если вам нужно отсутствовать на занятиях,
+                    можно сообщить группе.
+                </p>
+
+                <textarea
+                    id="absenceReason"
+                    placeholder="Напишите причину..."
+                    style="margin-top:12px; min-height:100px;"></textarea>
+
+                <button
+                    class="primary-button"
+                    onclick="submitAbsence()">
+                    Отправить
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>📢 Заявки</h3>
+
+                <div id="absenceList">
+                    Пока заявок нет.
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ПРЕДЛОЖЕНИЯ -->
+
+    <section class="section">
+
+        <div class="section-title">
+            <span>🎉</span>
+            Предложение пойти вместе
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+
+                <h3>💡 Создать предложение</h3>
+
+                <input
+                    type="text"
+                    id="proposalText"
+                    placeholder="Например: пойти в кино">
+
+                <button
+                    class="primary-button"
+                    onclick="addProposal()">
+                    Создать предложение
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>🗳️ Голосования</h3>
+
+                <div id="proposalList">
+                    Пока предложений нет.
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ПРИНАДЛЕЖНОСТИ -->
+
+    <section class="section">
+
+        <div class="section-title">
+            <span>📦</span>
+            Принадлежности аудитории
+        </div>
+
+        <div
+            id="supplyEditor"
+            class="supply-form">
+
+            <input
+                type="text"
+                id="supplyInput"
+                placeholder="Например: маркеры">
+
+            <button
+                class="primary-button"
+                onclick="addSupply()">
+                + Добавить
+            </button>
+
+        </div>
+
+        <div
+            id="supplyList"
+            class="supply-list">
+        </div>
+
+    </section>
+
+</div>
+
+
+<footer>
+    JARVIS SYSTEM • Группа 3-400-25-201В • <span id="footerDeveloper">Gyutaro</span>
+</footer>
+
+
+<!-- =========================
+     AUTH MODAL
+========================= -->
+
+<div
+    id="authModal"
+    class="modal">
+
+    <div class="modal-box">
+
+        <button
+            class="close-modal"
+            onclick="closeAuthModal()">
+            ×
+        </button>
+
+        <div class="modal-title">
+            🔐 Система авторизации
+        </div>
+
+
+        <div class="auth-tabs">
+
+            <button
+                id="loginTab"
+                class="auth-tab active"
+                onclick="showAuthForm('login')">
+                🔐 Войти
+            </button>
+
+            <button
+                id="registerTab"
+                class="auth-tab"
+                onclick="showAuthForm('register')">
+                📝 Создать аккаунт
+            </button>
+
+        </div>
+
+
+        <!-- LOGIN -->
+
+        <form
+            id="loginForm"
+            class="auth-form active"
+            onsubmit="login(event)">
+
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Введите email"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Пароль</label>
+
+                <div class="password-wrap">
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Введите пароль"
+                        required>
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('loginPassword', this)"
+                        title="Показать пароль">
+                        👁️
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-button auth-submit">
+                🔐 Войти
+            </button>
+
+            <div
+                id="loginMessage"
+                class="auth-message">
+            </div>
+
+        </form>
+
+
+        <!-- REGISTER -->
+
+        <form
+            id="registerForm"
+            class="auth-form"
+            onsubmit="register(event)">
+
+            <div class="form-group">
+
+                <label>Имя</label>
+
+                <input
+                    type="text"
+                    id="registerName"
+                    placeholder="Ваше имя"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="example@gmail.com"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Пароль</label>
+
+                <div class="password-wrap">
+
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        placeholder="Придумайте пароль"
+                        minlength="4"
+                        required>
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('registerPassword', this)"
+                        title="Показать пароль">
+                        👁️
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- AVATAR -->
+
+            <div class="avatar-section">
+
+                <label style="display:block; color:#76e5ff; margin-bottom:10px;">
+                    🖼️ Аватар аккаунта
+                </label>
+
+                <div class="avatar-preview-area">
+
+                    <div
+                        id="avatarDefaultPreview"
+                        class="avatar-default-preview">
+                        👤
+                    </div>
+
+                    <img
+                        id="avatarPreview"
+                        class="avatar-preview"
+                        alt="Предпросмотр аватара">
+
+                    <div class="avatar-buttons">
+
+                        <label
+                            for="registerAvatar"
+                            class="file-label">
+                            📷 Выбрать фото
+                        </label>
+
+                        <input
+                            type="file"
+                            id="registerAvatar"
+                            class="file-input"
+                            accept="image/*"
+                            onchange="handleAvatarSelect(event)">
+
+                        <br>
+
+                        <button
+                            type="button"
+                            id="removeAvatarButton"
+                            class="remove-avatar"
+                            onclick="removeSelectedAvatar()">
+                            🗑️ Убрать фото
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div
+                    style="font-size:11px; color:#5ba9b8; margin-top:10px;">
+                    Можно выбрать фотографию с компьютера или телефона.
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-button auth-submit">
+                📝 Создать аккаунт
+            </button>
+
+            <div
+                id="registerMessage"
+                class="auth-message">
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     ACCOUNTS MODAL (для Владельца)
+========================= -->
+
+<div
+    id="accountsModal"
+    class="modal">
+
+    <div class="modal-box wide">
+
+        <button
+            class="close-modal"
+            onclick="closeAccountsModal()">
+            ×
+        </button>
+
+        <div class="modal-title">
+            👥 Все зарегистрированные аккаунты
+        </div>
+
+        <div
+            id="accountsContainer"
+            class="account-card-list">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     INFO MODAL (куратор / староста / разработчик)
+========================= -->
+
+<div
+    id="infoModal"
+    class="modal">
+
+    <div class="modal-box">
+
+        <button
+            class="close-modal"
+            onclick="closeInfoModal()">
+            ×
+        </button>
+
+        <div
+            id="infoModalTitle"
+            class="modal-title">
+            Изменить
+        </div>
+
+        <div class="form-group">
+
+            <label>Имя</label>
+
+            <input
+                type="text"
+                id="infoNameInput"
+                placeholder="Введите имя">
+
+        </div>
+
+        <div class="avatar-section">
+
+            <label style="display:block; color:#76e5ff; margin-bottom:10px;">
+                🖼️ Фотография
+            </label>
+
+            <div class="avatar-preview-area">
+
+                <div
+                    id="infoPhotoDefault"
+                    class="avatar-default-preview">
+                    👤
+                </div>
+
+                <img
+                    id="infoPhotoPreview"
+                    class="avatar-preview"
+                    alt="Предпросмотр фото">
+
+                <div class="avatar-buttons">
+
+                    <label
+                        for="infoPhotoInput"
+                        class="file-label">
+                        📷 Выбрать фото
+                    </label>
+
+                    <input
+                        type="file"
+                        id="infoPhotoInput"
+                        class="file-input"
+                        accept="image/*"
+                        onchange="handleInfoPhoto(event)">
+
+                    <br>
+
+                    <button
+                        type="button"
+                        id="infoPhotoRemove"
+                        class="remove-avatar"
+                        onclick="removeInfoPhoto()">
+                        🗑️ Убрать фото
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <button
+            class="primary-button auth-submit"
+            onclick="saveInfo()">
+            💾 Сохранить
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
+// Supabase project configuration. Paste the publishable key from Supabase here.
+const SUPABASE_URL = "https://kyctuhhskoaofwyosrzv.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_g-jQ9hO1quE58lCxxi_r1w_2cYMZhOI";
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+);
+
+/* =====================================================
+   ДАННЫЕ И КОНСТАНТЫ
+===================================================== */
+
+const DAYS = [
+    { key: "ПН", label: "Пн" },
+    { key: "ВТ", label: "Вт" },
+    { key: "СР", label: "Ср" },
+    { key: "ЧТ", label: "Чт" },
+    { key: "ПТ", label: "Пт" },
+    { key: "СБ", label: "Сб" }
+];
+
+const INFO_ROLES = {
+    curator: "Куратор",
+    headman: "Староста",
+    developer: "Разработчик"
+};
+
+let activeDay = "ПН";
+
+
+function emptySchedule() {
+
+    const result = {};
+
+    DAYS.forEach(day => {
+        result[day.key] = [];
+    });
+
+    return result;
+}
+
+
+let schedule = emptySchedule();
+let info = {
+    curator: { name: "Не указан", photo: "" },
+    headman: { name: "Не указан", photo: "" },
+    developer: { name: "Gyutaro", photo: "" }
+};
+let proposals = [];
+let supplies = [];
+let absences = [];
+let accounts = [];
+let currentUser = null;
+let siteRealtimeChannel = null;
+
+
+let selectedAvatar = "";
+
+
+/* =====================================================
+   SUPABASE DATA
+===================================================== */
+
+function showDatabaseError(error) {
+    console.error(error);
+    alert("Не удалось сохранить данные в Supabase: " + (error.message || error));
+}
+
+async function loadSiteData() {
+    if (!currentUser) return;
+
+    const [scheduleResult, infoResult, suppliesResult, proposalResult,
+        votesResult, absenceResult] = await Promise.all([
+        supabaseClient.from("schedule").select("id, day, position, lesson").order("position"),
+        supabaseClient.from("site_info").select("role, name, photo"),
+        supabaseClient.from("supplies").select("id, name").order("id"),
+        supabaseClient.from("proposals").select("id, text, created_by, created_at").order("created_at"),
+        supabaseClient.from("proposal_votes").select("proposal_id, user_id"),
+        supabaseClient.from("absences").select("id, user_id, display_name, reason, status, created_at").order("created_at")
+    ]);
+
+    for (const result of [scheduleResult, infoResult, suppliesResult, proposalResult, votesResult, absenceResult]) {
+        if (result.error) throw result.error;
+    }
+
+    schedule = emptySchedule();
+    scheduleResult.data.forEach(row => {
+        if (schedule[row.day]) schedule[row.day].push(row.lesson);
+    });
+
+    info = {
+        curator: { name: "Не указан", photo: "" },
+        headman: { name: "Не указан", photo: "" },
+        developer: { name: "Gyutaro", photo: "" }
+    };
+    infoResult.data.forEach(row => {
+        if (info[row.role]) info[row.role] = { name: row.name, photo: row.photo || "" };
+    });
+
+    supplies = suppliesResult.data;
+    const votesByProposal = {};
+    votesResult.data.forEach(vote => {
+        (votesByProposal[vote.proposal_id] ||= []).push(vote.user_id);
+    });
+    proposals = proposalResult.data.map(row => ({
+        id: row.id, text: row.text, created_by: row.created_by,
+        votes: votesByProposal[row.id] || []
+    }));
+    absences = absenceResult.data.map(row => ({
+        id: row.id, user_id: row.user_id, user: row.display_name,
+        reason: row.reason, status: row.status,
+        date: new Date(row.created_at).toLocaleString("ru-RU")
+    }));
+
+    renderSchedule();
+    renderInfo();
+    renderSupplies();
+    renderProposals();
+    renderAbsences();
+}
+
+async function loadCurrentProfile(user) {
+    if (!user) {
+        if (siteRealtimeChannel) {
+            supabaseClient.removeChannel(siteRealtimeChannel);
+            siteRealtimeChannel = null;
+        }
+        currentUser = null;
+        accounts = [];
+        schedule = emptySchedule();
+        proposals = []; supplies = []; absences = [];
+        renderSchedule(); renderInfo(); renderSupplies(); renderProposals(); renderAbsences();
+        updateAuthUI();
+        return;
+    }
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id, email, display_name, avatar, role")
+        .eq("id", user.id)
+        .single();
+    if (error) throw error;
+    currentUser = {
+        id: user.id, email: user.email, name: data.display_name || user.email,
+        avatar: data.avatar || "", role: data.role
+    };
+    updateAuthUI();
+    await loadSiteData();
+    subscribeSiteRealtime();
+}
+
+function subscribeSiteRealtime() {
+    if (siteRealtimeChannel || !currentUser) return;
+    siteRealtimeChannel = supabaseClient.channel("shared-site-data")
+        .on("postgres_changes", { event: "*", schema: "public", table: "schedule" }, () => loadSiteData().catch(console.error))
+        .on("postgres_changes", { event: "*", schema: "public", table: "site_info" }, () => loadSiteData().catch(console.error))
+        .on("postgres_changes", { event: "*", schema: "public", table: "supplies" }, () => loadSiteData().catch(console.error))
+        .on("postgres_changes", { event: "*", schema: "public", table: "proposals" }, () => loadSiteData().catch(console.error))
+        .on("postgres_changes", { event: "*", schema: "public", table: "proposal_votes" }, () => loadSiteData().catch(console.error))
+        .on("postgres_changes", { event: "*", schema: "public", table: "absences" }, () => loadSiteData().catch(console.error))
+        .subscribe();
+}
+async function initializeSupabaseApp() {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) throw error;
+    await loadCurrentProfile(data.session?.user || null);
+    renderSchedule();
+    renderInfo();
+    renderSupplies();
+    renderProposals();
+    renderAbsences();
+    supabaseClient.auth.onAuthStateChange((_event, session) => {
+        setTimeout(() => loadCurrentProfile(session?.user || null).catch(showDatabaseError), 0);
+    });
+}
+
+
+/* =====================================================
+   AUTH MODAL
+===================================================== */
+
+function openAuthModal() {
+
+    document
+        .getElementById("authModal")
+        .classList.add("active");
+
+    showAuthForm("login");
+}
+
+
+function closeAuthModal() {
+
+    document
+        .getElementById("authModal")
+        .classList.remove("active");
+
+    clearAuthMessages();
+}
+
+
+document
+    .getElementById("authModal")
+    .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+            closeAuthModal();
+        }
+
+    });
+
+
+function showAuthForm(type) {
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const registerForm =
+        document.getElementById("registerForm");
+
+    const loginTab =
+        document.getElementById("loginTab");
+
+    const registerTab =
+        document.getElementById("registerTab");
+
+
+    if (type === "login") {
+
+        loginForm.classList.add("active");
+        registerForm.classList.remove("active");
+
+        loginTab.classList.add("active");
+        registerTab.classList.remove("active");
+
+    } else {
+
+        loginForm.classList.remove("active");
+        registerForm.classList.add("active");
+
+        loginTab.classList.remove("active");
+        registerTab.classList.add("active");
+
+    }
+
+    clearAuthMessages();
+}
+
+
+function clearAuthMessages() {
+
+    document.getElementById("loginMessage").textContent = "";
+    document.getElementById("registerMessage").textContent = "";
+}
+
+
+/* =====================================================
+   ПОКАЗАТЬ / СКРЫТЬ ПАРОЛЬ
+===================================================== */
+
+function togglePassword(inputId, button) {
+
+    const input =
+        document.getElementById(inputId);
+
+    if (input.type === "password") {
+
+        input.type = "text";
+
+        button.textContent = "🙈";
+        button.title = "Скрыть пароль";
+
+    } else {
+
+        input.type = "password";
+
+        button.textContent = "👁️";
+        button.title = "Показать пароль";
+
+    }
+}
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+function handleAvatarSelect(event) {
+
+    const file = event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+
+    if (!file.type.startsWith("image/")) {
+
+        alert("Пожалуйста, выберите изображение.");
+
+        event.target.value = "";
+
+        return;
+    }
+
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+
+        selectedAvatar = e.target.result;
+
+        const preview =
+            document.getElementById("avatarPreview");
+
+        const defaultPreview =
+            document.getElementById("avatarDefaultPreview");
+
+        const removeButton =
+            document.getElementById("removeAvatarButton");
+
+
+        preview.src = selectedAvatar;
+
+        preview.style.display = "block";
+
+        defaultPreview.style.display = "none";
+
+        removeButton.style.display = "inline-block";
+    };
+
+    reader.readAsDataURL(file);
+}
+
+
+function removeSelectedAvatar() {
+
+    selectedAvatar = "";
+
+    document.getElementById("registerAvatar").value = "";
+
+    document.getElementById("avatarPreview").src = "";
+
+    document.getElementById("avatarPreview").style.display = "none";
+
+    document.getElementById("avatarDefaultPreview").style.display = "flex";
+
+    document.getElementById("removeAvatarButton").style.display = "none";
+}
+
+
+/* =====================================================
+   СЖАТИЕ АВАТАРКИ
+===================================================== */
+
+function compressImage(file, maxSize = 256, quality = 0.78) {
+
+    return new Promise((resolve, reject) => {
+
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+
+            const img = new Image();
+
+            img.onload = function() {
+
+                let width = img.width;
+                let height = img.height;
+
+
+                if (width > height) {
+
+                    if (width > maxSize) {
+                        height =
+                            height * maxSize / width;
+
+                        width = maxSize;
+                    }
+
+                } else {
+
+                    if (height > maxSize) {
+                        width =
+                            width * maxSize / height;
+
+                        height = maxSize;
+                    }
+                }
+
+
+                const canvas =
+                    document.createElement("canvas");
+
+                canvas.width = width;
+                canvas.height = height;
+
+
+                const ctx =
+                    canvas.getContext("2d");
+
+                ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+
+                resolve(
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        quality
+                    )
+                );
+            };
+
+
+            img.onerror = function() {
+                reject(new Error("Не удалось обработать изображение."));
+            };
+
+
+            img.src = event.target.result;
+        };
+
+
+        reader.onerror = function() {
+            reject(new Error("Не удалось прочитать файл."));
+        };
+
+
+        reader.readAsDataURL(file);
+    });
+}
+
+
+/* =====================================================
+   РЕГИСТРАЦИЯ
+===================================================== */
+
+async function register(event) {
+    event.preventDefault();
+    const name = document.getElementById("registerName").value.trim();
+    const email = document.getElementById("registerEmail").value.trim().toLowerCase();
+    const password = document.getElementById("registerPassword").value;
+    const message = document.getElementById("registerMessage");
+    if (password.length < 6) {
+        message.textContent = "Пароль должен содержать минимум 6 символов.";
+        message.className = "auth-message error";
+        return;
+    }
+
+    let avatar = "";
+    try {
+        const file = document.getElementById("registerAvatar").files[0];
+        if (selectedAvatar && file) avatar = await compressImage(file);
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: { data: { name, avatar } }
+        });
+        if (error) throw error;
+        if (!data.session) {
+            message.textContent = "Проверьте почту и подтвердите регистрацию, затем войдите на сайт.";
+            message.className = "auth-message success";
+            return;
+        }
+        await loadCurrentProfile(data.user);
+        message.textContent = "Аккаунт создан. Владелец и администраторы назначаются через защищённые настройки базы.";
+        message.className = "auth-message success";
+        setTimeout(closeAuthModal, 1000);
+    } catch (error) {
+        message.textContent = error.message || "Не удалось создать аккаунт.";
+        message.className = "auth-message error";
+    }
+}
+
+
+/* =====================================================
+   ВХОД
+===================================================== */
+
+async function login(event) {
+    event.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const password = document.getElementById("loginPassword").value;
+    const message = document.getElementById("loginMessage");
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+        message.textContent = error.message || "Неверный email или пароль.";
+        message.className = "auth-message error";
+        return;
+    }
+    try {
+        await loadCurrentProfile(data.user);
+        message.textContent = "Вход выполнен!";
+        message.className = "auth-message success";
+        setTimeout(closeAuthModal, 700);
+    } catch (profileError) {
+        message.textContent = "Вход выполнен, но профиль не загрузился: " + profileError.message;
+        message.className = "auth-message error";
+    }
+}
+
+
+/* =====================================================
+   ВЫХОД
+===================================================== */
+
+function logout() {
+    supabaseClient.auth.signOut().catch(showDatabaseError);
+}
+
+
+/* =====================================================
+   ПРОВЕРКА РОЛЕЙ
+===================================================== */
+
+function isOwner() {
+    return currentUser && currentUser.role === "owner";
+}
+
+function isAdmin() {
+    return currentUser && (currentUser.role === "admin" || currentUser.role === "owner");
+}
+
+
+/* =====================================================
+   УПРАВЛЕНИЕ АККАУНТАМИ (ТОЛЬКО ДЛЯ ВЛАДЕЛЬЦА)
+===================================================== */
+
+async function openAccountsModal() {
+
+    if (!isOwner()) {
+        alert("У вас нет прав Владельца для просмотра списка аккаунтов.");
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id, email, display_name, avatar, role")
+        .order("display_name");
+    if (error) return showDatabaseError(error);
+    accounts = data.map(row => ({
+        id: row.id, email: row.email, name: row.display_name,
+        avatar: row.avatar || "", role: row.role
+    }));
+    renderAccountsList();
+
+    document
+        .getElementById("accountsModal")
+        .classList.add("active");
+}
+
+
+function closeAccountsModal() {
+
+    document
+        .getElementById("accountsModal")
+        .classList.remove("active");
+}
+
+
+document
+    .getElementById("accountsModal")
+    .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+            closeAccountsModal();
+        }
+
+    });
+
+
+function renderAccountsList() {
+
+    const container =
+        document.getElementById("accountsContainer");
+
+    container.innerHTML = "";
+
+
+    if (accounts.length === 0) {
+
+        container.innerHTML =
+            "<div style='color:#6fb8c5;'>Нет зарегистрированных аккаунтов.</div>";
+
+        return;
+    }
+
+
+    accounts.forEach(acc => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "account-card";
+
+
+        const infoDiv =
+            document.createElement("div");
+
+        infoDiv.className = "account-card-info";
+
+
+        if (acc.avatar) {
+
+            const img =
+                document.createElement("img");
+
+            img.className = "account-card-avatar";
+
+            img.src = acc.avatar;
+
+            img.alt = acc.name;
+
+            infoDiv.appendChild(img);
+
+        } else {
+
+            const defaultAvatar =
+                document.createElement("div");
+
+            defaultAvatar.className = "account-card-default-avatar";
+
+            defaultAvatar.textContent = "👤";
+
+            infoDiv.appendChild(defaultAvatar);
+        }
+
+
+        const details =
+            document.createElement("div");
+
+        details.className = "account-card-details";
+
+
+        const name =
+            document.createElement("div");
+
+        name.className = "account-card-name";
+
+        name.textContent = acc.name;
+
+
+        const email =
+            document.createElement("div");
+
+        email.className = "account-card-email";
+
+        email.textContent = "📧 " + acc.email;
+
+
+        const role =
+            document.createElement("div");
+
+        role.className = "account-card-role";
+
+        if (acc.role === "owner") {
+            role.innerHTML = "Статус: <span class='role-badge-owner'>👑 Владелец сайта</span>";
+        } else if (acc.role === "admin") {
+            role.innerHTML = "Статус: <span class='role-badge-admin'>⭐ Администратор</span>";
+        } else {
+            role.innerHTML = "Статус: <span class='role-badge-student'>🎓 Студент</span>";
+        }
+
+
+        details.appendChild(name);
+        details.appendChild(email);
+        details.appendChild(role);
+
+        infoDiv.appendChild(details);
+
+
+        card.appendChild(infoDiv);
+
+
+        // Кнопки управления правами только для Владельца и не на самого себя
+        if (acc.role !== "owner") {
+            const btn = document.createElement("button");
+            btn.className = "role-toggle-btn";
+
+            if (acc.role === "admin") {
+                btn.classList.add("role-btn-remove-admin");
+                btn.textContent = "❌ Снять админа";
+                btn.onclick = function() {
+                    toggleUserAdminRole(acc.id, "student");
+                };
+            } else {
+                btn.classList.add("role-btn-make-admin");
+                btn.textContent = "⭐ Назначить админом";
+                btn.onclick = function() {
+                    toggleUserAdminRole(acc.id, "admin");
+                };
+            }
+
+            card.appendChild(btn);
+        }
+
+        container.appendChild(card);
+    });
+}
+
+
+async function toggleUserAdminRole(userId, newRole) {
+
+    if (!isOwner()) {
+        alert("Только Владелец может менять статусы аккаунтов.");
+        return;
+    }
+
+    const acc = accounts.find(a => a.id === userId);
+    if (!acc || acc.role === "owner") return;
+    const { error } = await supabaseClient
+        .from("profiles").update({ role: newRole }).eq("id", userId);
+    if (error) return showDatabaseError(error);
+    acc.role = newRole;
+    renderAccountsList();
+    if (currentUser && currentUser.id === userId) {
+        currentUser.role = newRole;
+        updateAuthUI();
+    }
+}
+
+
+/* =====================================================
+   ОБНОВЛЕНИЕ UI АВТОРИЗАЦИИ
+===================================================== */
+
+function updateAuthUI() {
+
+    const loginButton =
+        document.getElementById("loginButton");
+
+    const accountsAdminButton =
+        document.getElementById("accountsAdminButton");
+
+    const userBadge =
+        document.getElementById("userBadge");
+
+    const userName =
+        document.getElementById("userName");
+
+    const userRole =
+        document.getElementById("userRole");
+
+    const avatarContainer =
+        document.getElementById("userAvatarContainer");
+
+
+    if (currentUser) {
+
+        loginButton.style.display = "none";
+
+        userBadge.style.display = "flex";
+
+
+        userName.textContent =
+            currentUser.name;
+
+
+        userRole.textContent =
+            isOwner()
+                ? "👑 Владелец сайта"
+                : (isAdmin() ? "⭐ Администратор" : "🎓 Студент");
+
+
+        avatarContainer.innerHTML = "";
+
+
+        if (currentUser.avatar) {
+
+            const img =
+                document.createElement("img");
+
+            img.className =
+                "user-avatar";
+
+            img.src =
+                currentUser.avatar;
+
+            img.alt =
+                "Аватар";
+
+            avatarContainer.appendChild(img);
+
+        } else {
+
+            const defaultAvatar =
+                document.createElement("div");
+
+            defaultAvatar.className =
+                "default-avatar";
+
+            defaultAvatar.textContent =
+                "👤";
+
+            avatarContainer.appendChild(
+                defaultAvatar
+            );
+        }
+
+    } else {
+
+        loginButton.style.display = "block";
+
+        userBadge.style.display = "none";
+    }
+
+
+    // Кнопка «Аккаунты» видна ТОЛЬКО Владельцу
+    if (isOwner()) {
+        accountsAdminButton.style.display = "inline-block";
+    } else {
+        accountsAdminButton.style.display = "none";
+    }
+
+
+    updateAdminControls();
+}
+
+
+/* =====================================================
+   ADMIN CONTROLS
+===================================================== */
+
+function updateAdminControls() {
+
+    document
+        .getElementById("scheduleEditor")
+        .style.display =
+            isAdmin() ? "block" : "none";
+
+    renderSchedule();
+
+    renderInfo();
+
+    renderAbsences();
+}
+
+
+/* =====================================================
+   SCHEDULE (вкладки по дням)
+===================================================== */
+
+function renderSchedule() {
+
+    const tabs =
+        document.getElementById("dayTabs");
+
+    const content =
+        document.getElementById("dayContent");
+
+
+    tabs.innerHTML = "";
+
+    content.innerHTML = "";
+
+
+    DAYS.forEach(day => {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "day-tab" +
+            (day.key === activeDay ? " active" : "");
+
+        button.textContent = day.key;
+
+        button.onclick = function() {
+
+            activeDay = day.key;
+
+            renderSchedule();
+        };
+
+        tabs.appendChild(button);
+    });
+
+
+    const currentDay =
+        DAYS.find(day => day.key === activeDay);
+
+    const lessons =
+        schedule[activeDay] || [];
+
+
+    const title =
+        document.createElement("div");
+
+    title.className = "day-title";
+
+    title.textContent =
+        currentDay.label + ":";
+
+    content.appendChild(title);
+
+
+    if (lessons.length === 0) {
+
+        const empty =
+            document.createElement("div");
+
+        empty.className = "day-empty";
+
+        empty.textContent =
+            isAdmin()
+                ? "Занятий пока не добавлено. Напишите урок ниже."
+                : "Занятий пока не добавлено.";
+
+        content.appendChild(empty);
+
+        return;
+    }
+
+
+    lessons.forEach((lesson, index) => {
+
+        const row =
+            document.createElement("div");
+
+        row.className = "lesson-item";
+
+
+        const label =
+            document.createElement("span");
+
+        label.textContent = lesson;
+
+        row.appendChild(label);
+
+
+        if (isAdmin()) {
+
+            const button =
+                document.createElement("button");
+
+            button.className = "delete-button";
+
+            button.textContent = "🗑️";
+
+            button.title = "Удалить";
+
+            button.onclick = function() {
+
+                deleteLesson(index);
+            };
+
+            row.appendChild(button);
+        }
+
+        content.appendChild(row);
+    });
+}
+
+
+async function persistSchedule() {
+    const { error: deleteError } = await supabaseClient.from("schedule").delete().neq("id", 0);
+    if (deleteError) throw deleteError;
+    const rows = [];
+    Object.entries(schedule).forEach(([day, lessons]) => lessons.forEach((lesson, position) => rows.push({ day, position, lesson })));
+    if (rows.length) {
+        const { error } = await supabaseClient.from("schedule").insert(rows);
+        if (error) throw error;
+    }
+}
+
+async function addLesson() {
+    if (!isAdmin()) { alert("Только администратор может изменять расписание."); return; }
+    const input = document.getElementById("lessonInput");
+    const value = input.value.trim();
+    if (!value) return;
+    schedule[activeDay].push(value);
+    try {
+        await persistSchedule();
+        input.value = "";
+        renderSchedule();
+    } catch (error) {
+        schedule[activeDay].pop();
+        showDatabaseError(error);
+    }
+}
+
+async function deleteLesson(index) {
+    if (!isAdmin()) { alert("Только администратор может удалять занятия."); return; }
+    if (!confirm("Удалить это занятие?")) return;
+    const [removed] = schedule[activeDay].splice(index, 1);
+    try {
+        await persistSchedule();
+        renderSchedule();
+    } catch (error) {
+        schedule[activeDay].splice(index, 0, removed);
+        showDatabaseError(error);
+    }
+}
+
+/* =====================================================
+   КУРАТОР / СТАРОСТА / РАЗРАБОТЧИК
+===================================================== */
+
+let editingRole = null;
+
+let pendingPhoto = "";
+
+
+function renderInfo() {
+
+    Object.keys(INFO_ROLES).forEach(role => {
+
+        document
+            .getElementById("infoName-" + role)
+            .textContent = info[role].name;
+
+
+        const wrap =
+            document.getElementById("infoPhoto-" + role);
+
+        wrap.innerHTML = "";
+
+
+        if (info[role].photo) {
+
+            const img =
+                document.createElement("img");
+
+            img.className = "info-photo";
+
+            img.src = info[role].photo;
+
+            img.alt = INFO_ROLES[role];
+
+            wrap.appendChild(img);
+
+        } else {
+
+            const fallback =
+                document.createElement("div");
+
+            fallback.className = "info-photo-default";
+
+            fallback.textContent = "👤";
+
+            wrap.appendChild(fallback);
+        }
+
+
+        document
+            .getElementById("infoEdit-" + role)
+            .style.display =
+                isAdmin() ? "inline-block" : "none";
+    });
+
+
+    document
+        .getElementById("footerDeveloper")
+        .textContent = info.developer.name;
+}
+
+
+function updateInfoPreview() {
+
+    const preview =
+        document.getElementById("infoPhotoPreview");
+
+    const fallback =
+        document.getElementById("infoPhotoDefault");
+
+    const removeButton =
+        document.getElementById("infoPhotoRemove");
+
+
+    if (pendingPhoto) {
+
+        preview.src = pendingPhoto;
+
+        preview.style.display = "block";
+
+        fallback.style.display = "none";
+
+        removeButton.style.display = "inline-block";
+
+    } else {
+
+        preview.removeAttribute("src");
+
+        preview.style.display = "none";
+
+        fallback.style.display = "flex";
+
+        removeButton.style.display = "none";
+    }
+}
+
+
+function openInfoModal(role) {
+
+    if (!isAdmin()) {
+
+        alert(
+            "Только администратор может это менять."
+        );
+
+        return;
+    }
+
+
+    editingRole = role;
+
+    pendingPhoto = info[role].photo || "";
+
+
+    document
+        .getElementById("infoModalTitle")
+        .textContent =
+            "Изменить: " + INFO_ROLES[role];
+
+
+    document
+        .getElementById("infoNameInput")
+        .value =
+            info[role].name === "Не указан"
+                ? ""
+                : info[role].name;
+
+
+    document
+        .getElementById("infoPhotoInput")
+        .value = "";
+
+
+    updateInfoPreview();
+
+    document
+        .getElementById("infoModal")
+        .classList.add("active");
+}
+
+
+function closeInfoModal() {
+
+    document
+        .getElementById("infoModal")
+        .classList.remove("active");
+
+    editingRole = null;
+}
+
+
+function handleInfoPhoto(event) {
+
+    const file = event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+
+    if (!file.type.startsWith("image/")) {
+
+        alert("Пожалуйста, выберите изображение.");
+
+        event.target.value = "";
+
+        return;
+    }
+
+
+    compressImage(file, 320, 0.8)
+        .then(dataUrl => {
+
+            pendingPhoto = dataUrl;
+
+            updateInfoPreview();
+        })
+        .catch(error => {
+
+            console.error(error);
+
+            alert("Не удалось обработать фото.");
+        });
+}
+
+
+function removeInfoPhoto() {
+
+    pendingPhoto = "";
+
+    document
+        .getElementById("infoPhotoInput")
+        .value = "";
+
+    updateInfoPreview();
+}
+
+
+async function saveInfo() {
+    if (!isAdmin() || !editingRole) return;
+    const name = document.getElementById("infoNameInput").value.trim();
+    if (!name) { alert("Введите имя."); return; }
+    const updated = { name, photo: pendingPhoto };
+    const { error } = await supabaseClient.from("site_info").upsert({ role: editingRole, name, photo: pendingPhoto });
+    if (error) return showDatabaseError(error);
+    info[editingRole] = updated;
+    renderInfo();
+    closeInfoModal();
+}
+
+
+/* =====================================================
+   SUPPLIES
+===================================================== */
+
+function renderSupplies() {
+
+    const list =
+        document.getElementById("supplyList");
+
+
+    list.innerHTML = "";
+
+
+    if (supplies.length === 0) {
+
+        list.innerHTML =
+            "<div style='color:#6fb8c5;'>Список пуст.</div>";
+
+        return;
+    }
+
+
+    supplies.forEach((item, index) => {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "supply-item";
+
+
+        const text =
+            document.createElement("span");
+
+        text.textContent =
+            "📦 " + item.name;
+
+        div.appendChild(text);
+
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "delete-button";
+
+        button.textContent =
+            "Удалить";
+        if (!isAdmin()) button.style.display = "none";
+
+        button.onclick =
+            function() {
+
+                deleteSupply(index);
+            };
+
+        div.appendChild(button);
+
+
+        list.appendChild(div);
+    });
+}
+
+
+async function addSupply() {
+    if (!currentUser) { alert("Сначала войдите в аккаунт."); openAuthModal(); return; }
+    const input = document.getElementById("supplyInput");
+    const value = input.value.trim();
+    if (!value) return;
+    const { data, error } = await supabaseClient.from("supplies").insert({ name: value }).select("id, name").single();
+    if (error) return showDatabaseError(error);
+    supplies.push(data);
+    input.value = "";
+    renderSupplies();
+}
+
+
+async function deleteSupply(index) {
+    if (!isAdmin()) return;
+    const item = supplies[index];
+    if (!item) return;
+    const { error } = await supabaseClient.from("supplies").delete().eq("id", item.id);
+    if (error) return showDatabaseError(error);
+    supplies.splice(index, 1);
+    renderSupplies();
+}
+
+
+/* =====================================================
+   ПРОПОЗИЦИИ
+===================================================== */
+
+function renderProposals() {
+
+    const list =
+        document.getElementById("proposalList");
+
+
+    list.innerHTML = "";
+
+
+    if (proposals.length === 0) {
+
+        list.textContent =
+            "Пока предложений нет.";
+
+        return;
+    }
+
+
+    proposals.forEach((proposal, index) => {
+
+        const card =
+            document.createElement("div");
+
+        card.style.marginBottom =
+            "12px";
+
+        card.style.padding =
+            "12px";
+
+        card.style.border =
+            "1px solid rgba(0,220,255,0.2)";
+
+        card.style.borderRadius =
+            "8px";
+
+
+        const title =
+            document.createElement("div");
+
+        title.style.color =
+            "white";
+
+        title.style.marginBottom =
+            "8px";
+
+        title.textContent =
+            "🎉 " + proposal.text;
+
+
+        const info =
+            document.createElement("div");
+
+        info.style.fontSize =
+            "12px";
+
+        info.style.color =
+            "#6fc5d4";
+
+        info.textContent =
+            "Голосов: " +
+            proposal.votes.length;
+
+
+        const voteButton =
+            document.createElement("button");
+
+        voteButton.className =
+            "primary-button";
+
+
+        const voted =
+            currentUser &&
+            proposal.votes.includes(
+                currentUser.id
+            );
+
+
+        voteButton.textContent =
+            voted
+                ? "❌ Убрать голос"
+                : "👍 Голосовать";
+
+
+        voteButton.onclick =
+            function() {
+
+                toggleVote(index);
+
+            };
+
+
+        const deleteButton =
+            document.createElement("button");
+
+        deleteButton.className =
+            "delete-button";
+
+        deleteButton.style.marginLeft =
+            "8px";
+
+        deleteButton.textContent =
+            "🗑️";
+        if (!isAdmin()) deleteButton.style.display = "none";
+
+
+        deleteButton.onclick =
+            function() {
+
+                deleteProposal(index);
+
+            };
+
+
+        card.appendChild(title);
+
+        card.appendChild(info);
+
+        card.appendChild(voteButton);
+
+        card.appendChild(deleteButton);
+
+
+        list.appendChild(card);
+    });
+}
+
+
+async function addProposal() {
+    if (!currentUser) { alert("Сначала войдите в аккаунт."); openAuthModal(); return; }
+    const input = document.getElementById("proposalText");
+    const text = input.value.trim();
+    if (!text) { alert("Введите предложение."); return; }
+    const { data, error } = await supabaseClient.from("proposals")
+        .insert({ text, created_by: currentUser.id }).select("id, text, created_by").single();
+    if (error) return showDatabaseError(error);
+    proposals.push({ ...data, votes: [] });
+    input.value = "";
+    renderProposals();
+}
+
+
+async function toggleVote(index) {
+    if (!currentUser) { alert("Сначала войдите в аккаунт."); openAuthModal(); return; }
+    const proposal = proposals[index];
+    if (!proposal) return;
+    const position = proposal.votes.indexOf(currentUser.id);
+    const result = position === -1
+        ? await supabaseClient.from("proposal_votes").insert({ proposal_id: proposal.id, user_id: currentUser.id })
+        : await supabaseClient.from("proposal_votes").delete().eq("proposal_id", proposal.id).eq("user_id", currentUser.id);
+    if (result.error) return showDatabaseError(result.error);
+    if (position === -1) proposal.votes.push(currentUser.id); else proposal.votes.splice(position, 1);
+    renderProposals();
+}
+
+
+async function deleteProposal(index) {
+    if (!isAdmin()) return;
+    if (!confirm("Удалить это предложение?")) return;
+    const proposal = proposals[index];
+    if (!proposal) return;
+    const { error } = await supabaseClient.from("proposals").delete().eq("id", proposal.id);
+    if (error) return showDatabaseError(error);
+    proposals.splice(index, 1);
+    renderProposals();
+}
+
+
+/* =====================================================
+   ОТПРОСИТЬСЯ
+===================================================== */
+
+const STATUS_LABELS = {
+    pending: "⏳ На рассмотрении",
+    approved: "✅ Принято",
+    rejected: "❌ Отклонено"
+};
+
+
+async function submitAbsence() {
+    if (!currentUser) { alert("Сначала войдите в аккаунт."); openAuthModal(); return; }
+    const input = document.getElementById("absenceReason");
+    const reason = input.value.trim();
+    if (!reason) { alert("Напишите причину."); return; }
+    const { data, error } = await supabaseClient.from("absences").insert({
+        user_id: currentUser.id, display_name: currentUser.name, reason
+    }).select("id, user_id, display_name, reason, status, created_at").single();
+    if (error) return showDatabaseError(error);
+    absences.push({ id: data.id, user_id: data.user_id, user: data.display_name, reason: data.reason,
+        status: data.status, date: new Date(data.created_at).toLocaleString("ru-RU") });
+    input.value = "";
+    renderAbsences();
+}
+
+
+async function setAbsenceStatus(id, status) {
+    if (!isAdmin()) { alert("Только администраторы могут изменять статус заявки."); return; }
+    const item = absences.find(entry => entry.id === id);
+    if (!item) return;
+    const { error } = await supabaseClient.from("absences").update({ status }).eq("id", id);
+    if (error) return showDatabaseError(error);
+    item.status = status;
+    renderAbsences();
+}
+
+
+async function deleteAbsence(id) {
+    if (!isAdmin()) return;
+    if (!confirm("Удалить эту заявку?")) return;
+    const { error } = await supabaseClient.from("absences").delete().eq("id", id);
+    if (error) return showDatabaseError(error);
+    absences = absences.filter(entry => entry.id !== id);
+    renderAbsences();
+}
+
+
+function renderAbsences() {
+
+    const list =
+        document.getElementById("absenceList");
+
+
+    list.innerHTML = "";
+
+
+    if (absences.length === 0) {
+
+        list.textContent =
+            "Пока заявок нет.";
+
+        return;
+    }
+
+
+    absences.slice().reverse().forEach(item => {
+
+        const status =
+            STATUS_LABELS[item.status]
+                ? item.status
+                : "pending";
+
+
+        const box =
+            document.createElement("div");
+
+        box.className = "absence-item";
+
+
+        const head =
+            document.createElement("div");
+
+        const name =
+            document.createElement("strong");
+
+        name.textContent = item.user;
+
+        const badge =
+            document.createElement("span");
+
+        badge.className =
+            "status-badge status-" + status;
+
+        badge.textContent =
+            STATUS_LABELS[status];
+
+        head.appendChild(name);
+        head.appendChild(badge);
+
+
+        const reason =
+            document.createElement("div");
+
+        reason.className = "absence-reason";
+
+        reason.textContent = item.reason;
+
+
+        const date =
+            document.createElement("small");
+
+        date.style.color = "#5897a3";
+
+        date.textContent = item.date;
+
+
+        box.appendChild(head);
+        box.appendChild(reason);
+        box.appendChild(date);
+
+
+        if (isAdmin()) {
+
+            const actions =
+                document.createElement("div");
+
+            actions.className = "absence-actions";
+
+
+            if (status !== "approved") {
+
+                const approve =
+                    document.createElement("button");
+
+                approve.className = "approve-button";
+
+                approve.textContent = "✅ Принять";
+
+                approve.onclick = function() {
+
+                    setAbsenceStatus(item.id, "approved");
+                };
+
+                actions.appendChild(approve);
+            }
+
+
+            if (status !== "rejected") {
+
+                const reject =
+                    document.createElement("button");
+
+                reject.className = "delete-button";
+
+                reject.textContent = "❌ Отклонить";
+
+                reject.onclick = function() {
+
+                    setAbsenceStatus(item.id, "rejected");
+                };
+
+                actions.appendChild(reject);
+            }
+
+
+            const remove =
+                document.createElement("button");
+
+            remove.className = "delete-button";
+
+            remove.textContent = "🗑️";
+
+            remove.title = "Удалить заявку";
+
+            remove.onclick = function() {
+
+                deleteAbsence(item.id);
+            };
+
+            actions.appendChild(remove);
+
+
+            box.appendChild(actions);
+        }
+
+
+        list.appendChild(box);
+    });
+}
+
+
+/* =====================================================
+   БЕЗОПАСНЫЙ ТЕКСТ
+===================================================== */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+}
+
+
+/* =====================================================
+   HUD CANVAS
+===================================================== */
+
+const canvas =
+    document.getElementById("hudCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+
+let particles = [];
+
+
+function resizeCanvas() {
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+}
+
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+resizeCanvas();
+
+
+function createParticles() {
+
+    particles = [];
+
+    const count =
+        Math.min(
+            90,
+            Math.floor(
+                window.innerWidth / 15
+            )
+        );
+
+
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
+
+        particles.push({
+
+            x:
+                Math.random() *
+                canvas.width,
+
+            y:
+                Math.random() *
+                canvas.height,
+
+            size:
+                Math.random() * 2 + 0.5,
+
+            speed:
+                Math.random() * 0.5 + 0.1,
+
+            alpha:
+                Math.random() * 0.7 + 0.2
+        });
+    }
+}
+
+
+createParticles();
+
+
+function animateHUD() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    particles.forEach(p => {
+
+        p.y -= p.speed;
+
+
+        if (p.y < 0) {
+
+            p.y =
+                canvas.height;
+
+            p.x =
+                Math.random() *
+                canvas.width;
+        }
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+            `rgba(0,220,255,${p.alpha})`;
+
+
+        ctx.fill();
+    });
+
+
+    requestAnimationFrame(
+        animateHUD
+    );
+}
+
+
+animateHUD();
+
+
+/* =====================================================
+   ЗАПУСК
+===================================================== */
+
+initializeSupabaseApp().catch(showDatabaseError);
+
+
+document
+    .getElementById("lessonInput")
+    .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+            addLesson();
+        }
+
+    });
+
+
+document
+    .getElementById("supplyInput")
+    .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+            addSupply();
+        }
+
+    });
+
+
+document
+    .getElementById("infoModal")
+    .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+            closeInfoModal();
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
