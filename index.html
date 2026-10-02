@@ -167,6 +167,69 @@ h1 {
     box-shadow: 0 0 10px rgba(0,217,255,0.45);
 }
 
+.profile-avatar-trigger {
+    border: 0;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+}
+
+.profile-avatar-trigger:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+
+.profile-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(0,220,255,0.3);
+    border-radius: 12px;
+    background: rgba(0,80,120,0.14);
+}
+
+.profile-large-avatar, .profile-large-default-avatar {
+    width: 82px;
+    height: 82px;
+    flex: 0 0 82px;
+    border-radius: 50%;
+    border: 2px solid #00d9ff;
+    object-fit: cover;
+}
+
+.profile-large-default-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    background: rgba(0,100,150,0.25);
+}
+
+.profile-details { min-width: 0; }
+.profile-details strong { display: block; color: #fff; font-size: 20px; overflow-wrap: anywhere; }
+.profile-details span { display: block; margin-top: 5px; color: #8bdff3; overflow-wrap: anywhere; }
+.profile-actions { display: grid; gap: 12px; }
+.profile-note { color: #9bcbd5; font-size: 13px; line-height: 1.5; margin: 10px 0; }
+.profile-message { min-height: 20px; margin-top: 10px; font-size: 13px; }
+.profile-message.error { color: #ff7895; }
+.profile-message.success { color: #71e6a5; }
+.profile-separator { border: 0; border-top: 1px solid rgba(0,220,255,0.22); margin: 20px 0; }
+.profile-secondary-button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 11px 14px;
+    border: 1px solid rgba(0,220,255,0.45);
+    border-radius: 8px;
+    color: #9beeff;
+    background: rgba(0,100,150,0.16);
+    cursor: pointer;
+}
+.profile-secondary-button:hover { background: rgba(0,150,200,0.25); }
+
 .default-avatar {
     width: 42px;
     height: 42px;
@@ -1075,7 +1138,14 @@ footer {
                 id="userBadge"
                 class="user-badge">
 
-                <div id="userAvatarContainer"></div>
+                <button
+                    type="button"
+                    id="userAvatarContainer"
+                    class="profile-avatar-trigger"
+                    onclick="openProfileModal()"
+                    title="Открыть мой профиль"
+                    aria-label="Открыть мой профиль">
+                </button>
 
                 <div class="user-info">
                     <div id="userName" class="user-name"></div>
@@ -1548,6 +1618,77 @@ footer {
 
 
 <!-- =========================
+     PROFILE MODAL
+========================= -->
+
+<div id="profileModal" class="modal" aria-hidden="true">
+    <div class="modal-box">
+        <button class="close-modal" onclick="closeProfileModal()" aria-label="Закрыть">×</button>
+
+        <div id="profileView">
+            <div class="modal-title">👤 Мой профиль</div>
+            <div class="profile-summary">
+                <div id="profileViewAvatar"></div>
+                <div class="profile-details">
+                    <strong id="profileViewName"></strong>
+                    <span id="profileViewEmail"></span>
+                    <span id="profileViewRole"></span>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <button class="primary-button" onclick="openProfileSettings()">⚙️ Настройки профиля</button>
+                <button class="logout-button" onclick="logout()">Выйти из аккаунта</button>
+            </div>
+        </div>
+
+        <div id="profileSettingsView" style="display:none;">
+            <div class="modal-title">⚙️ Настройки профиля</div>
+            <div class="form-group">
+                <label for="profileNameInput">Имя</label>
+                <input id="profileNameInput" type="text" maxlength="80" autocomplete="name" placeholder="Ваше имя">
+            </div>
+
+            <div class="avatar-section">
+                <label style="display:block; color:#76e5ff; margin-bottom:10px;">🖼️ Аватар аккаунта</label>
+                <div class="avatar-preview-area">
+                    <div id="profileAvatarDefault" class="avatar-default-preview">👤</div>
+                    <img id="profileAvatarPreview" class="avatar-preview" alt="Предпросмотр аватара">
+                    <div class="avatar-buttons">
+                        <label for="profileAvatarInput" class="file-label">📷 Выбрать фото</label>
+                        <input type="file" id="profileAvatarInput" class="file-input" accept="image/*" onchange="handleProfileAvatarChange(event)">
+                        <br>
+                        <button type="button" id="profileAvatarRemove" class="remove-avatar" onclick="removeProfileAvatar()">🗑️ Убрать фото</button>
+                    </div>
+                </div>
+                <div class="profile-note">Фото сожмётся перед сохранением и появится рядом с вашим именем.</div>
+            </div>
+            <button class="primary-button auth-submit" id="saveProfileButton" onclick="saveOwnProfile()">💾 Сохранить имя и аватар</button>
+            <div id="profileSaveMessage" class="profile-message" aria-live="polite"></div>
+
+            <hr class="profile-separator">
+            <div class="modal-title" style="font-size:19px;">🔒 Сменить пароль</div>
+            <div class="form-group">
+                <label for="profileNewPassword">Новый пароль</label>
+                <input id="profileNewPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Минимум 6 символов">
+            </div>
+            <div class="form-group">
+                <label for="profileRepeatPassword">Повторите новый пароль</label>
+                <input id="profileRepeatPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Введите пароль ещё раз">
+            </div>
+            <button class="profile-secondary-button" id="savePasswordButton" onclick="changeOwnPassword()">🔑 Сохранить новый пароль</button>
+            <div id="passwordSaveMessage" class="profile-message" aria-live="polite"></div>
+
+            <hr class="profile-separator">
+            <div class="modal-title" style="font-size:19px;">Google</div>
+            <div class="profile-note">В присланном HTML сейчас нет входа и привязки через Google. Для смены Google-аккаунта нужно сначала настроить Google OAuth в Supabase и добавить этот способ входа в сайт.</div>
+            <button class="profile-secondary-button" type="button" disabled title="Сначала требуется настроить Google OAuth" style="opacity:.55; cursor:not-allowed;">Google пока не настроен</button>
+            <button class="profile-secondary-button" type="button" onclick="returnToProfileView()">← Назад к профилю</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================
      ACCOUNTS MODAL (для Владельца)
 ========================= -->
 
@@ -1731,6 +1872,7 @@ let siteRealtimeChannel = null;
 
 
 let selectedAvatar = "";
+let profileAvatarDraft = "";
 
 
 /* =====================================================
@@ -2176,6 +2318,178 @@ async function login(event) {
     } catch (profileError) {
         message.textContent = "Вход выполнен, но профиль не загрузился: " + profileError.message;
         message.className = "auth-message error";
+    }
+}
+
+/* =====================================================
+   МОЙ ПРОФИЛЬ И ЕГО НАСТРОЙКИ
+===================================================== */
+
+function openProfileModal() {
+    if (!currentUser) return;
+    const modal = document.getElementById("profileModal");
+    const view = document.getElementById("profileView");
+    const settings = document.getElementById("profileSettingsView");
+    view.style.display = "block";
+    settings.style.display = "none";
+    document.getElementById("profileViewName").textContent = currentUser.name || "Без имени";
+    document.getElementById("profileViewEmail").textContent = currentUser.email || "";
+    document.getElementById("profileViewRole").textContent = isOwner()
+        ? "👑 Владелец сайта"
+        : (isAdmin() ? "⭐ Администратор" : "🎓 Студент");
+
+    const avatarBox = document.getElementById("profileViewAvatar");
+    avatarBox.replaceChildren();
+    if (currentUser.avatar) {
+        const image = document.createElement("img");
+        image.className = "profile-large-avatar";
+        image.src = currentUser.avatar;
+        image.alt = "Аватар профиля";
+        avatarBox.appendChild(image);
+    } else {
+        const placeholder = document.createElement("div");
+        placeholder.className = "profile-large-default-avatar";
+        placeholder.textContent = "👤";
+        avatarBox.appendChild(placeholder);
+    }
+    document.getElementById("profileModal").classList.add("active");
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeProfileModal() {
+    const modal = document.getElementById("profileModal");
+    modal.classList.remove("active");
+    modal.setAttribute("aria-hidden", "true");
+}
+
+function openProfileSettings() {
+    if (!currentUser) return;
+    document.getElementById("profileView").style.display = "none";
+    document.getElementById("profileSettingsView").style.display = "block";
+    document.getElementById("profileNameInput").value = currentUser.name || "";
+    document.getElementById("profileSaveMessage").textContent = "";
+    document.getElementById("passwordSaveMessage").textContent = "";
+    document.getElementById("profileNewPassword").value = "";
+    document.getElementById("profileRepeatPassword").value = "";
+    document.getElementById("profileAvatarInput").value = "";
+    profileAvatarDraft = currentUser.avatar || "";
+    renderProfileAvatarPreview();
+}
+
+function returnToProfileView() {
+    openProfileModal();
+}
+
+function renderProfileAvatarPreview() {
+    const image = document.getElementById("profileAvatarPreview");
+    const placeholder = document.getElementById("profileAvatarDefault");
+    const removeButton = document.getElementById("profileAvatarRemove");
+    if (profileAvatarDraft) {
+        image.src = profileAvatarDraft;
+        image.style.display = "block";
+        placeholder.style.display = "none";
+        removeButton.style.display = "inline-block";
+    } else {
+        image.removeAttribute("src");
+        image.style.display = "none";
+        placeholder.style.display = "flex";
+        removeButton.style.display = "none";
+    }
+}
+
+async function handleProfileAvatarChange(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+        event.target.value = "";
+        document.getElementById("profileSaveMessage").textContent = "Выберите файл изображения.";
+        document.getElementById("profileSaveMessage").className = "profile-message error";
+        return;
+    }
+    try {
+        profileAvatarDraft = await compressImage(file);
+        renderProfileAvatarPreview();
+        document.getElementById("profileSaveMessage").textContent = "Фото выбрано. Нажмите «Сохранить имя и аватар».";
+        document.getElementById("profileSaveMessage").className = "profile-message";
+    } catch (error) {
+        document.getElementById("profileSaveMessage").textContent = error.message || "Не удалось обработать фото.";
+        document.getElementById("profileSaveMessage").className = "profile-message error";
+    }
+}
+
+function removeProfileAvatar() {
+    profileAvatarDraft = "";
+    document.getElementById("profileAvatarInput").value = "";
+    renderProfileAvatarPreview();
+}
+
+async function saveOwnProfile() {
+    if (!currentUser) return;
+    const name = document.getElementById("profileNameInput").value.trim();
+    const message = document.getElementById("profileSaveMessage");
+    const button = document.getElementById("saveProfileButton");
+    if (!name) {
+        message.textContent = "Введите имя.";
+        message.className = "profile-message error";
+        return;
+    }
+    button.disabled = true;
+    try {
+        const { data, error } = await supabaseClient
+            .from("profiles")
+            .update({ display_name: name, avatar: profileAvatarDraft })
+            .eq("id", currentUser.id)
+            .select("id, email, display_name, avatar, role")
+            .single();
+        if (error) throw error;
+        currentUser = {
+            id: data.id,
+            email: data.email || currentUser.email,
+            name: data.display_name || name,
+            avatar: data.avatar || "",
+            role: data.role
+        };
+        updateAuthUI();
+        message.textContent = "Имя и аватар сохранены.";
+        message.className = "profile-message success";
+        openProfileModal();
+    } catch (error) {
+        message.textContent = "Не удалось сохранить профиль: " + (error.message || error);
+        message.className = "profile-message error";
+    } finally {
+        button.disabled = false;
+    }
+}
+
+async function changeOwnPassword() {
+    const password = document.getElementById("profileNewPassword").value;
+    const repeated = document.getElementById("profileRepeatPassword").value;
+    const message = document.getElementById("passwordSaveMessage");
+    const button = document.getElementById("savePasswordButton");
+    if (!currentUser) return;
+    if (password.length < 6) {
+        message.textContent = "Новый пароль должен содержать минимум 6 символов.";
+        message.className = "profile-message error";
+        return;
+    }
+    if (password !== repeated) {
+        message.textContent = "Пароли не совпадают.";
+        message.className = "profile-message error";
+        return;
+    }
+    button.disabled = true;
+    try {
+        const { error } = await supabaseClient.auth.updateUser({ password });
+        if (error) throw error;
+        document.getElementById("profileNewPassword").value = "";
+        document.getElementById("profileRepeatPassword").value = "";
+        message.textContent = "Пароль изменён. Используйте его при следующем входе по Email.";
+        message.className = "profile-message success";
+    } catch (error) {
+        message.textContent = "Не удалось изменить пароль: " + (error.message || error);
+        message.className = "profile-message error";
+    } finally {
+        button.disabled = false;
     }
 }
 
