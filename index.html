@@ -1097,6 +1097,23 @@ footer {
         width: 100%;
     }
 }
+
+/* =========================
+   НОВОСТИ И ДЕЖУРСТВО
+========================= */
+.news-composer { display:none; margin-bottom:18px; }
+.news-composer input, .news-composer textarea { margin-bottom:10px; }
+.news-composer textarea { min-height:100px; resize:vertical; }
+.news-list { display:grid; gap:12px; }
+.news-item { padding:16px; border:1px solid rgba(0,220,255,0.22); border-radius:10px; background:rgba(0,30,50,0.35); }
+.news-item h3 { color:#72e8ff; margin-bottom:7px; }
+.news-item p { color:#d2edf2; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
+.news-meta { color:#6fc5d4; font-size:12px; margin-top:10px; }
+.news-item .delete-button { margin-top:10px; }
+.news-empty, .news-login-note { color:#9fc3cc; line-height:1.5; }
+.duty-card { display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; }
+.duty-number { color:#fff; font-size:clamp(30px,6vw,52px); font-weight:bold; text-shadow:0 0 16px rgba(0,220,255,0.55); }
+.duty-date { color:#8bdff3; margin-top:5px; }
 </style>
 </head>
 
@@ -1248,6 +1265,29 @@ footer {
 
     </section>
 
+
+
+    <!-- НОВОСТИ -->
+    <section class="section" id="newsSection">
+        <div class="section-title"><span>📰</span>Новости</div>
+        <div id="newsComposer" class="news-composer">
+            <input type="text" id="newsTitle" maxlength="120" placeholder="Заголовок новости">
+            <textarea id="newsText" maxlength="10000" placeholder="Текст новости..."></textarea>
+            <button class="primary-button" onclick="addNews()">Опубликовать новость</button>
+        </div>
+        <div id="newsLoginNote" class="news-login-note" style="display:none;">Войдите в аккаунт, чтобы читать новости.</div>
+        <div id="newsList" class="news-list"><div class="news-empty">Новости пока не опубликованы.</div></div>
+    </section>
+
+    <!-- ДЕЖУРСТВО -->
+    <section class="section" id="dutySection">
+        <div class="section-title"><span>🪑</span>Дежурные</div>
+        <div class="card duty-card">
+            <div><h3>Сегодня дежурит</h3><div id="dutyDate" class="duty-date"></div></div>
+            <div id="dutyNumber" class="duty-number" aria-live="polite">Парта №1</div>
+        </div>
+        <p class="profile-note">Парта меняется каждый день по кругу: №1, №2 … №12. Отсчёт начинается 11 октября 2026 года с парты №1.</p>
+    </section>
 
     <!-- ОТГУЛ -->
 
@@ -1866,6 +1906,7 @@ let info = {
 let proposals = [];
 let supplies = [];
 let absences = [];
+let newsPosts = [];
 let accounts = [];
 let currentUser = null;
 let siteRealtimeChannel = null;
@@ -1888,16 +1929,17 @@ async function loadSiteData() {
     if (!currentUser) return;
 
     const [scheduleResult, infoResult, suppliesResult, proposalResult,
-        votesResult, absenceResult] = await Promise.all([
+        votesResult, absenceResult, newsResult] = await Promise.all([
         supabaseClient.from("schedule").select("id, day, position, lesson").order("position"),
         supabaseClient.from("site_info").select("role, name, photo"),
         supabaseClient.from("supplies").select("id, name").order("id"),
         supabaseClient.from("proposals").select("id, text, created_by, created_at").order("created_at"),
         supabaseClient.from("proposal_votes").select("proposal_id, user_id"),
-        supabaseClient.from("absences").select("id, user_id, display_name, reason, status, created_at").order("created_at")
+        supabaseClient.from("absences").select("id, user_id, display_name, reason, status, created_at").order("created_at"),
+        supabaseClient.from("news_posts").select("id, title, body, created_by, created_at").order("created_at", { ascending: false })
     ]);
 
-    for (const result of [scheduleResult, infoResult, suppliesResult, proposalResult, votesResult, absenceResult]) {
+    for (const result of [scheduleResult, infoResult, suppliesResult, proposalResult, votesResult, absenceResult, newsResult]) {
         if (result.error) throw result.error;
     }
 
@@ -1930,6 +1972,8 @@ async function loadSiteData() {
         date: new Date(row.created_at).toLocaleString("ru-RU")
     }));
 
+    newsPosts = newsResult.data || [];
+    renderNews();
     renderSchedule();
     renderInfo();
     renderSupplies();
@@ -1947,7 +1991,7 @@ async function loadCurrentProfile(user) {
         accounts = [];
         schedule = emptySchedule();
         proposals = []; supplies = []; absences = [];
-        renderSchedule(); renderInfo(); renderSupplies(); renderProposals(); renderAbsences();
+        renderSchedule(); renderInfo(); renderSupplies(); renderProposals(); renderAbsences(); newsPosts = []; renderNews();
         updateAuthUI();
         return;
     }
@@ -1975,6 +2019,7 @@ function subscribeSiteRealtime() {
         .on("postgres_changes", { event: "*", schema: "public", table: "proposals" }, () => loadSiteData().catch(console.error))
         .on("postgres_changes", { event: "*", schema: "public", table: "proposal_votes" }, () => loadSiteData().catch(console.error))
         .on("postgres_changes", { event: "*", schema: "public", table: "absences" }, () => loadSiteData().catch(console.error))
+        .on("postgres_changes", { event: "*", schema: "public", table: "news_posts" }, () => loadSiteData().catch(console.error))
         .subscribe();
 }
 async function initializeSupabaseApp() {
@@ -2822,6 +2867,8 @@ function updateAdminControls() {
         .style.display =
             isAdmin() ? "block" : "none";
 
+    document.getElementById("newsComposer").style.display = isAdmin() ? "block" : "none";
+    renderNews();
     renderSchedule();
 
     renderInfo();
@@ -3292,6 +3339,56 @@ async function deleteSupply(index) {
    ПРОПОЗИЦИИ
 ===================================================== */
 
+/* =====================================================
+   НОВОСТИ
+===================================================== */
+function renderNews() {
+    const list = document.getElementById("newsList"), note = document.getElementById("newsLoginNote");
+    if (!list || !note) return;
+    note.style.display = currentUser ? "none" : "block";
+    list.innerHTML = "";
+    if (!currentUser) return;
+    if (!newsPosts.length) { list.innerHTML = "<div class='news-empty'>Новости пока не опубликованы.</div>"; return; }
+    newsPosts.forEach(post => {
+        const article = document.createElement("article"); article.className = "news-item";
+        const heading = document.createElement("h3"); heading.textContent = post.title;
+        const body = document.createElement("p"); body.textContent = post.body;
+        const meta = document.createElement("div"); meta.className = "news-meta";
+        meta.textContent = new Date(post.created_at).toLocaleString("ru-RU");
+        article.append(heading, body, meta);
+        if (isAdmin()) {
+            const remove = document.createElement("button"); remove.className = "delete-button";
+            remove.textContent = "Удалить"; remove.onclick = () => deleteNews(post.id); article.appendChild(remove);
+        }
+        list.appendChild(article);
+    });
+}
+async function addNews() {
+    if (!isAdmin()) { alert("Публиковать новости могут только администратор и владелец."); return; }
+    const titleInput = document.getElementById("newsTitle"), bodyInput = document.getElementById("newsText");
+    const title = titleInput.value.trim(), body = bodyInput.value.trim();
+    if (!title || !body) { alert("Заполните заголовок и текст новости."); return; }
+    const { data, error } = await supabaseClient.from("news_posts").insert({ title, body, created_by: currentUser.id })
+        .select("id, title, body, created_by, created_at").single();
+    if (error) return showDatabaseError(error);
+    newsPosts.unshift(data); titleInput.value = ""; bodyInput.value = ""; renderNews();
+}
+async function deleteNews(id) {
+    if (!isAdmin()) return;
+    const { error } = await supabaseClient.from("news_posts").delete().eq("id", id);
+    if (error) return showDatabaseError(error);
+    newsPosts = newsPosts.filter(post => post.id !== id); renderNews();
+}
+function renderDuty() {
+    const dateParts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tashkent", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+    const part = type => dateParts.find(item => item.type === type).value;
+    const todayKey = `${part("year")}-${part("month")}-${part("day")}`;
+    const [ty, tm, td] = todayKey.split("-").map(Number), [sy, sm, sd] = [2026, 10, 11];
+    const dayDifference = Math.floor((Date.UTC(ty, tm - 1, td) - Date.UTC(sy, sm - 1, sd)) / 86400000);
+    const deskNumber = ((dayDifference % 12) + 12) % 12 + 1;
+    document.getElementById("dutyNumber").textContent = `Парта №${deskNumber}`;
+    document.getElementById("dutyDate").textContent = new Date(`${todayKey}T12:00:00+05:00`).toLocaleDateString("ru-RU", { timeZone: "Asia/Tashkent", weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
 function renderProposals() {
 
     const list =
@@ -3803,6 +3900,8 @@ animateHUD();
    ЗАПУСК
 ===================================================== */
 
+renderDuty();
+setInterval(renderDuty, 60 * 1000);
 initializeSupabaseApp().catch(showDatabaseError);
 
 
@@ -3842,3 +3941,8 @@ document
 
 </body>
 </html>
+
+
+
+
+
